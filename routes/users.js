@@ -73,30 +73,38 @@ router.post('/login', async (ctx, netx) => {
 
     let username = ctx.request.body.username || "";
     let password = ctx.request.body.password || "";
+    if (username && password) {
 
-    await ctx.dbExe(sql.queryUserByUserNameAndPassword(username, password))
-        .then(filed => {
-            if (!(filed[0]['sl'] === 0)) {
-                ctx.body = {
-                    success: true,
-                    msg: '登录成功！',
-                    data: {
-                        username: filed[0]['USERNAME']
+
+        await ctx.dbExe(sql.queryUserByUserNameAndPassword(username, password))
+            .then(filed => {
+                if (!(filed[0]['sl'] === 0)) {
+                    ctx.body = {
+                        success: true,
+                        msg: '登录成功！',
+                        data: {
+                            username: filed[0]['USERNAME']
+                        }
+                    }
+                } else {
+                    ctx.body = {
+                        success: false,
+                        msg: '用户不存在，请先注册！'
                     }
                 }
-            } else {
+            }).catch(err => {
+                console.log(err);
                 ctx.body = {
                     success: false,
-                    msg: '用户不存在，请先注册！'
+                    msg: '服务器失败！'
                 }
-            }
-        }).catch(err => {
-            console.log(err);
-            ctx.body = {
-                success: false,
-                msg: '服务器失败！'
-            }
-        });
+            });
+    } else {
+        ctx.body = {
+            success: false,
+            msg: '用户名或者密码不能为空！'
+        }
+    }
 });
 
 module.exports = router;
