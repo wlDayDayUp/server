@@ -74,8 +74,6 @@ router.post('/login', async (ctx, netx) => {
     let username = ctx.request.body.username || "";
     let password = ctx.request.body.password || "";
     if (username && password) {
-
-
         await ctx.dbExe(sql.queryUserByUserNameAndPassword(username, password))
             .then(filed => {
                 if (!(filed[0]['sl'] === 0)) {
