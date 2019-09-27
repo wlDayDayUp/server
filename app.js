@@ -6,6 +6,15 @@ const onerror = require('koa-onerror');
 const bodyparser = require('koa-bodyparser');
 const logger = require('koa-logger');
 
+// 文件上传中间件
+const koaBody = require('koa-body');
+app.use(koaBody({
+    multipart: true,
+    formidable: {
+        maxFileSize: 200 * 1024 * 1024    // 设置上传文件大小最大限制，默认2M
+    }
+}));
+
 // 数据库
 const db = require('./utils/db');
 
@@ -13,6 +22,7 @@ app.context.dbExe = db.dbExe;
 
 const index = require('./routes/index');
 const users = require('./routes/users');
+const client_cs = require('./routes/client_cs');
 
 // error handler
 onerror(app);
@@ -40,6 +50,7 @@ app.use(async (ctx, next) => {
 // routes
 app.use(index.routes(), index.allowedMethods());
 app.use(users.routes(), users.allowedMethods());
+app.use(client_cs.routes(), users.allowedMethods());
 
 // error-handling
 app.on('error', (err, ctx) => {
